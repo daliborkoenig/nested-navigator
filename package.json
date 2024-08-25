@@ -1,0 +1,30 @@
+{
+  "name": "nested-navigator",
+  "version": "1.0.0",
+  "description": "A lightweight, type-safe utility to effortlessly navigate and query deeply nested objects and arrays in JavaScript and TypeScript.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "typescript",
+    "javascript",
+    "nested",
+    "objects",
+    "arrays",
+    "navigation",
+    "query"
+  ],
+  "author": "Dalibor Koenig",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daliborkoenig/nested-navigator"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "typescript": "^5.5.4"
+  }
+}
