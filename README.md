@@ -15,7 +15,7 @@ A lightweight, type-safe utility for effortlessly navigating and querying deeply
   - [navigator(obj)](#navigatorobj)
   - [navigateTo(path)](#navigatetopath)
   - [find(key, value)](#findkey-value)
-  - [getIndex(keyOrValue, value)](#getIndexkeyOrValue-value)
+  - [getIndex(keyOrValue, value?)](#getindexkeyorvalue-value)
   - [value()](#value)
 - [Examples](#examples)
 - [TypeScript Support](#typescript-support)
