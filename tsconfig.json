@@ -1,17 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "module": "CommonJS",
-    "lib": ["ES6", "DOM"],
-    "declaration": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node"
+    "target": "ES5", // Ensure compatibility with older environments
+    "module": "CommonJS", // CommonJS for Node.js and most environments
+    "lib": ["ES6", "DOM"], // Provides necessary type definitions
+    "declaration": true, // Generate .d.ts files
+    "declarationMap": true, // Generate .d.ts.map files for debugging
+    "sourceMap": true, // Generate .js.map files for debugging
+    "outDir": "./dist", // Output directory for compiled files
+    "rootDir": "./src", // Root directory of your source files
+    "strict": true, // Enable all strict type-checking options
+    "esModuleInterop": true, // Compatibility with ES modules
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Ensure consistent file naming
+    "moduleResolution": "node" // Module resolution strategy
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/__tests__/*", "dist"]
+  "include": ["src"], // Include all files in the src directory
+  "exclude": ["node_modules", "**/__tests__/*", "dist"] // Exclude these directories
 }
