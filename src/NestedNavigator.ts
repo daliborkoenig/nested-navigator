@@ -53,22 +53,39 @@ export class NestedNavigator<T, C = T> {
    *
    * @template K - The type of the key to search on (must be a key of the array element type).
    * @param key - The key to search on.
-   * @param value - The value to search for.
-   * @returns A new NestedNavigator instance with the found array element.
-   * @throws {Error} If the current value is not an array.
+   * @param value - The value to search for. If undefined, the method will return undefined.
+   * @returns A new NestedNavigator instance with the found array element, or undefined if:
+   *          - The current value is not an array
+   *          - No element is found matching the key-value pair
+   *          - The provided value is undefined
    */
   find<K extends C extends any[] ? keyof C[number] : never>(
     key: K,
-    value: C extends any[] ? C[number][K] : never
-  ): NestedNavigator<T, C extends any[] ? C[number] : never> {
+    value: C extends any[] ? C[number][K] | undefined : never
+  ): NestedNavigator<T, C extends any[] ? C[number] | undefined : undefined> {
     if (!Array.isArray(this.current)) {
-      throw new Error("find can only be applied to arrays");
+      return new NestedNavigator<
+        T,
+        C extends any[] ? C[number] | undefined : undefined
+      >(
+        this.obj,
+        undefined as C extends any[] ? C[number] | undefined : undefined
+      );
+    }
+    if (value === undefined) {
+      return new NestedNavigator<
+        T,
+        C extends any[] ? C[number] | undefined : undefined
+      >(
+        this.obj,
+        undefined as C extends any[] ? C[number] | undefined : undefined
+      );
     }
     const found = this.current.find((item) => item[key] === value);
-    return new NestedNavigator<T, C extends any[] ? C[number] : never>(
-      this.obj,
-      found
-    );
+    return new NestedNavigator<
+      T,
+      C extends any[] ? C[number] | undefined : undefined
+    >(this.obj, found as C extends any[] ? C[number] | undefined : undefined);
   }
 
   /**
@@ -78,8 +95,7 @@ export class NestedNavigator<T, C = T> {
    * @template V - The type of the value to search for (only for object arrays).
    * @param keyOrValue - The key to search on (for object arrays) or the value to search for (for primitive arrays).
    * @param value - The value to search for (only used for object arrays).
-   * @returns A new NestedNavigator instance with the found array element.
-   * @throws {Error} If the current value is not an array.
+   * @returns The index of the found element, -1 if not found, or undefined if the current value is not an array.
    */
   getIndex<
     K extends C extends any[]
@@ -89,30 +105,23 @@ export class NestedNavigator<T, C = T> {
       : never,
     V extends C extends any[]
       ? C[number] extends object
-        ? C[number][K & keyof C[number]]
+        ? C[number][K & keyof C[number]] | undefined
         : never
       : never
-  >(
-    keyOrValue: K,
-    value?: V
-  ): NestedNavigator<T, C extends any[] ? C[number] : never> {
+  >(keyOrValue: K, value?: V): number | undefined {
     if (!Array.isArray(this.current)) {
-      throw new Error("getIndex can only be applied to arrays");
+      return undefined;
     }
-
-    let found: C extends any[] ? C[number] : never;
 
     if (typeof keyOrValue !== "object" && value === undefined) {
       // Searching by value in an array of primitives
-      found = this.current.findIndex((item) => item === keyOrValue) as any;
+      return this.current.findIndex((item) => item === keyOrValue);
     } else {
       // Searching by key-value pair in an array of objects
-      found = this.current.findIndex(
+      return this.current.findIndex(
         (item) => (item as any)[keyOrValue as string] === value
-      ) as any;
+      );
     }
-
-    return found;
   }
 
   /**

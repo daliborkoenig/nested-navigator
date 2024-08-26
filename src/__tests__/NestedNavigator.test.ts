@@ -121,15 +121,6 @@ describe("NestedNavigator", () => {
         .value();
       expect(result).toBeUndefined();
     });
-
-    it("should throw error when not used on an array", () => {
-      expect(() => {
-        (navigator(testData).navigateTo("user.name") as any).find(
-          "key",
-          "value"
-        );
-      }).toThrow("find can only be applied to arrays");
-    });
   });
 
   describe("getIndex method", () => {
@@ -157,15 +148,6 @@ describe("NestedNavigator", () => {
         .navigateTo("user.pets")
         .getIndex("snake");
       expect(index).toBe(-1);
-    });
-
-    it("should throw error when not used on an array", () => {
-      expect(() => {
-        (navigator(testData).navigateTo("user.name") as any).getIndex(
-          "key",
-          "value"
-        );
-      }).toThrow("getIndex can only be applied to arrays");
     });
   });
 
