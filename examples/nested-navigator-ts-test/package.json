@@ -1,0 +1,22 @@
+{
+  "name": "nested-navigator-ts-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "node-reset": "rm -rf node_modules && npm cache clean --force && npm install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "nested-navigator": "^1.0.1"
+  }
+}

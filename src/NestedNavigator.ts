@@ -1,4 +1,4 @@
-import { NestedKeyOf, NestedValueOf } from ".";
+import { NestedKeyOf, NestedValueOf } from "./types";
 
 /**
  * NestedNavigator provides a fluent interface for traversing and querying nested objects and arrays.

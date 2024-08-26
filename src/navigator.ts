@@ -7,7 +7,7 @@
  * @returns A NestedNavigator instance initialized with the given object
  *  */
 
-import { NestedNavigator } from ".";
+import { NestedNavigator } from "./NestedNavigator";
 
 export function navigator<T>(obj: T): NestedNavigator<T, T> {
   return new NestedNavigator(obj, obj);

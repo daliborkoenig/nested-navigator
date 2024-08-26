@@ -1,0 +1,16 @@
+{
+  "name": "nested-navigator-js-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "nested-navigator": "^1.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "node-reset": "rm -rf node_modules && npm cache clean --force && npm install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
