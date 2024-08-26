@@ -1,6 +1,6 @@
 {
   "name": "nested-navigator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight, type-safe utility with automatic type inference to effortlessly navigate and query deeply nested objects and arrays in JavaScript and TypeScript.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -11,7 +11,8 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "build": "tsc",
+    "build": "tsc --project tsconfig.prod.json",
+    "build:dev": "tsc --project tsconfig.dev.json",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
