@@ -124,6 +124,15 @@ Returns: The current value, or undefined if the navigation led to an invalid pat
 
 ### Examples
 
+Examples
+The examples folder contains several projects demonstrating how to use nested-navigator in different contexts:
+
+nested-navigator-js-test: A plain JavaScript example showcasing basic usage of nested-navigator.
+nested-navigator-ts-test: A TypeScript example demonstrating how to use nested-navigator with TypeScript for type safety and autocompletion.
+nested-navigator-reactjs-test: An example integrating nested-navigator with React (JavaScript).
+nested-navigator-reactts-test: An example integrating nested-navigator with React (TypeScript).
+These examples are provided to help you get started and understand how to apply nested-navigator in various scenarios.
+
 ### Navigating through nested objects
 
 ```javascript
