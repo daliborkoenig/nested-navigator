@@ -38,8 +38,12 @@ export class NestedNavigator<T, C = T> {
   ): NestedNavigator<T, NestedValueOf<C, K>> {
     const value = String(keyPath)
       .split(".")
-      .reduce((o: any, k) => {
-        return o && (Array.isArray(o) ? o[Number(k)] : o[k]);
+      .reduce((acc: any, key) => {
+        if (acc === undefined) return undefined;
+        if (Array.isArray(acc) && /^\d+$/.test(key)) {
+          return acc[parseInt(key, 10)];
+        }
+        return acc[key];
       }, this.current);
     return new NestedNavigator<T, NestedValueOf<C, K>>(this.obj, value);
   }
@@ -65,6 +69,50 @@ export class NestedNavigator<T, C = T> {
       this.obj,
       found
     );
+  }
+
+  /**
+   * Finds the index of an element in the current array based on a key-value pair or just a value.
+   *
+   * @template K - The type of the key to search on (for object arrays) or the type of value to search for (for primitive arrays).
+   * @template V - The type of the value to search for (only for object arrays).
+   * @param keyOrValue - The key to search on (for object arrays) or the value to search for (for primitive arrays).
+   * @param value - The value to search for (only used for object arrays).
+   * @returns A new NestedNavigator instance with the found array element.
+   * @throws {Error} If the current value is not an array.
+   */
+  getIndex<
+    K extends C extends any[]
+      ? C[number] extends object
+        ? keyof C[number]
+        : C[number]
+      : never,
+    V extends C extends any[]
+      ? C[number] extends object
+        ? C[number][K & keyof C[number]]
+        : never
+      : never
+  >(
+    keyOrValue: K,
+    value?: V
+  ): NestedNavigator<T, C extends any[] ? C[number] : never> {
+    if (!Array.isArray(this.current)) {
+      throw new Error("getIndex can only be applied to arrays");
+    }
+
+    let found: C extends any[] ? C[number] : never;
+
+    if (typeof keyOrValue !== "object" && value === undefined) {
+      // Searching by value in an array of primitives
+      found = this.current.findIndex((item) => item === keyOrValue) as any;
+    } else {
+      // Searching by key-value pair in an array of objects
+      found = this.current.findIndex(
+        (item) => (item as any)[keyOrValue as string] === value
+      ) as any;
+    }
+
+    return found;
   }
 
   /**

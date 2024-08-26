@@ -21,15 +21,22 @@ type Primitive = string | number | boolean | null | undefined;
  * For type T = { a: number, b: { c: string, d: { e: boolean } } }
  * NestedKeyOf<T> = 'a' | 'b' | 'b.c' | 'b.d' | 'b.d.e'
  */
-export type NestedKeyOf<T> = T extends Primitive
+export type NestedKeyOf<
+  T,
+  Depth extends unknown[] = []
+> = Depth["length"] extends 5 // Limit depth to 5
   ? never
-  : T extends Array<unknown>
+  : T extends Primitive
   ? never
-  : {
+  : T extends any[]
+  ? `${number}` | `${number}.${NestedKeyOf<T[number], [...Depth, unknown]>}`
+  : T extends object
+  ? {
       [K in keyof T & string]:
         | K
-        | (T[K] extends Primitive ? never : `${K}.${NestedKeyOf<T[K]>}`);
-    }[keyof T & string];
+        | `${K}.${NestedKeyOf<T[K], [...Depth, unknown]>}`;
+    }[keyof T & string]
+  : never;
 
 /**
  * A type that represents the value type at a given nested key path of type T.
@@ -50,10 +57,24 @@ export type NestedKeyOf<T> = T extends Primitive
  * NestedValueOf<T, 'b.d.e'> = boolean
  */
 
-export type NestedValueOf<T, K extends string> = K extends keyof T
+export type NestedValueOf<
+  T,
+  K extends string,
+  Depth extends unknown[] = []
+> = Depth["length"] extends 5
+  ? unknown
+  : K extends keyof T
   ? T[K]
+  : K extends `${number}`
+  ? T extends any[]
+    ? T[number]
+    : never
   : K extends `${infer F}.${infer R}`
   ? F extends keyof T
-    ? NestedValueOf<NonNullable<T[F]>, R>
+    ? NestedValueOf<NonNullable<T[F]>, R, [...Depth, unknown]>
+    : F extends `${number}`
+    ? T extends any[]
+      ? NestedValueOf<T[number], R, [...Depth, unknown]>
+      : never
     : never
   : never;
