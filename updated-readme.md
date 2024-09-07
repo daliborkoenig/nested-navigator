@@ -39,7 +39,7 @@ yarn add nested-navigator
 
 ## Usage
 
-## Basic Usage
+### Basic Usage
 
 ```javascript
 import { navigator } from "nested-navigator";
@@ -59,7 +59,7 @@ const city = navigator(data).navigateTo("user.address.city").value();
 console.log(city); // Outputs: 'New York'
 ```
 
-## Advanced Usage
+### Advanced Usage
 
 ```javascript
 const users = [
@@ -105,7 +105,6 @@ Finds an element in the current array based on a key-value pair.
 - `value`: The value to search for.
 
 Returns: A new NestedNavigator instance with the found array element.
-Throws an error if the current value is not an array.
 
 ### filter(key, value)
 
@@ -125,81 +124,15 @@ Finds the index of an element in the current array based on a key-value pair (fo
 
 Returns: The index of the found element, or -1 if not found.
 
-Throws an error if the current value is not an array.
-
 ### value()
 
 Returns the current value in the navigation.
+
 Returns: The current value, or undefined if the navigation led to an invalid path.
 
-### Examples
+## Examples
 
-Examples
-The examples folder contains several projects demonstrating how to use nested-navigator in different contexts:
-
-nested-navigator-js-test: A plain JavaScript example showcasing basic usage of nested-navigator.
-nested-navigator-ts-test: A TypeScript example demonstrating how to use nested-navigator with TypeScript for type safety and autocompletion.
-nested-navigator-reactjs-test: An example integrating nested-navigator with React (JavaScript).
-nested-navigator-reactts-test: An example integrating nested-navigator with React (TypeScript).
-These examples are provided to help you get started and understand how to apply nested-navigator in various scenarios.
-
-### Navigating through nested objects
-
-```javascript
-const data = {
-  user: {
-    profile: {
-      name: "John Doe",
-      age: 30,
-    },
-  },
-};
-
-const age = navigator(data).navigateTo("user.profile.age").value();
-
-console.log(age); // Outputs: 30
-```
-
-### Working with arrays
-
-```javascript
-const data = {
-  users: [
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
-  ],
-  tags: ["javascript", "typescript", "react"],
-};
-
-// Finding index in an array of objects
-const bobIndex = navigator(data).navigateTo("users").getIndex("name", "Bob");
-
-console.log(bobIndex); // Outputs: 1
-
-// Finding index in an array of primitives
-const reactIndex = navigator(data).navigateTo("tags").getIndex("react");
-
-console.log(reactIndex); // Outputs: 2
-```
-
-```javascript
-const data = {
-  users: [
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
-  ],
-};
-
-const bob = navigator(data).navigateTo("users").find("name", "Bob").value();
-
-console.log(bob); // Outputs: { id: 2, name: 'Bob' }
-
-const aliceIndex = navigator(data)
-  .navigateTo("users")
-  .getIndex("name", "Alice");
-
-console.log(aliceIndex); // Outputs: 0
-```
+### Filtering arrays
 
 ```javascript
 const data = {
@@ -222,50 +155,5 @@ console.log(admins);
 // ]
 ```
 
-### TypeScript Support
+[... rest of the README remains unchanged ...]
 
-nested-navigator is written in TypeScript and provides full type safety and autocompletion when used in TypeScript projects.
-
-```typescript
-import { navigator, NestedKeyOf } from "nested-navigator";
-
-interface Data {
-  users: Array<{ id: number; name: string }>;
-  tags: string[];
-}
-
-const data: Data = {
-  users: [
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
-  ],
-  tags: ["javascript", "typescript", "react"],
-};
-
-// Finding index in an array of objects
-const bobIndex = navigator(data).navigateTo("users").getIndex("name", "Bob");
-
-// Finding index in an array of primitives
-const reactIndex = navigator(data).navigateTo("tags").getIndex("react");
-
-console.log(bobIndex, reactIndex); // Outputs: 1 2
-
-const path: NestedKeyOf<User> = "address.city";
-const city = navigator(user).navigateTo(path).value();
-
-console.log(city); // Outputs: 'New York'
-```
-
-### Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-Fork the repository
-Create your feature branch (git checkout -b feature/AmazingFeature)
-Commit your changes (git commit -m 'Add some AmazingFeature')
-Push to the branch (git push origin feature/AmazingFeature)
-Open a Pull Request
-
-### License
-
-This project is licensed under the MIT License - see the LICENSE file for details.

@@ -89,6 +89,33 @@ export class NestedNavigator<T, C = T> {
   }
 
   /**
+   * Filters elements in the current array based on a key-value pair.
+   *
+   * @template K - The type of the key to filter on (must be a key of the array element type).
+   * @param key - The key to filter on.
+   * @param value - The value to filter for.
+   * @returns A new NestedNavigator instance with:
+   * - undefined if the current value is not an array
+   * - an array of matching objects otherwise (which may be empty if no matches are found)
+   */
+  filter<K extends C extends any[] ? keyof C[number] : never>(
+    key: K,
+    value: C extends any[] ? C[number][K] : never
+  ): NestedNavigator<T, C extends any[] ? C[number][] : undefined> {
+    if (!Array.isArray(this.current)) {
+      return new NestedNavigator<T, C extends any[] ? C[number][] : undefined>(
+        this.obj,
+        undefined as C extends any[] ? C[number][] : undefined
+      );
+    }
+    const found = this.current.filter((item) => item[key] === value);
+    return new NestedNavigator<T, C extends any[] ? C[number][] : undefined>(
+      this.obj,
+      found as C extends any[] ? C[number][] : undefined
+    );
+  }
+
+  /**
    * Finds the index of an element in the current array based on a key-value pair or just a value.
    *
    * @template K - The type of the key to search on (for object arrays) or the type of value to search for (for primitive arrays).

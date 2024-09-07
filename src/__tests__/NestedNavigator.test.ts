@@ -123,6 +123,49 @@ describe("NestedNavigator", () => {
     });
   });
 
+  describe("filter method", () => {
+    it("should filter elements in arrays of objects", () => {
+      const result = navigator(testData)
+        .navigateTo("user.hobbies")
+        .filter("value", "coding")
+        .value();
+      expect(result).toEqual([{ value: "coding", since: 2015 }]);
+    });
+
+    it("should return an empty array when no elements match", () => {
+      const result = navigator(testData)
+        .navigateTo("user.hobbies")
+        .filter("value", "swimming")
+        .value();
+      expect(result).toEqual([]);
+    });
+
+    it("should handle filtering on nested properties", () => {
+      const result = navigator(testData)
+        .navigateTo("settings.preferences")
+        .filter("value", "USD")
+        .value();
+      expect(result).toEqual([{ key: "currency", value: "USD" }]);
+    });
+
+    it("should return an empty array when filtering an empty array", () => {
+      const result = navigator(testData)
+        .navigateTo("emptyArray")
+        .filter("any", "value")
+        .value();
+      expect(result).toEqual([]);
+    });
+
+    it("should allow chaining after filter", () => {
+      const result = navigator(testData)
+        .navigateTo("user.hobbies")
+        .filter("since", 2015)
+        .navigateTo("0.value")
+        .value();
+      expect(result).toBe("coding");
+    });
+  });
+
   describe("getIndex method", () => {
     it("should find index of elements in arrays of objects", () => {
       const index = navigator(testData)
