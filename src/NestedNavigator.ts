@@ -152,6 +152,15 @@ export class NestedNavigator<T, C = T> {
   }
 
   /**
+   * Returns the length of the current value if it's an array, or undefined otherwise.
+   *
+   * @returns The length of the array if the current value is an array, or undefined if it's not an array.
+   */
+  getLength(): number | undefined {
+    return Array.isArray(this.current) ? this.current.length : undefined;
+  }
+
+  /**
    * Returns the current value in the deep navigation.
    *
    * @returns The current value, or undefined if the navigation led to an invalid path.

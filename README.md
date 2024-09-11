@@ -17,6 +17,7 @@ A lightweight, type-safe utility for effortlessly navigating and querying deeply
   - [find(key, value)](#findkey-value)
   - [filter(key, value)](#filterkey-value)
   - [getIndex(keyOrValue, value?)](#getindexkeyorvalue-value)
+  - [getLength()](#getlength)
   - [value()](#value)
 - [Examples](#examples)
 - [TypeScript Support](#typescript-support)
@@ -57,6 +58,10 @@ const data = {
 const city = navigator(data).navigateTo("user.address.city").value();
 
 console.log(city); // Outputs: 'New York'
+
+const hobbiesCount = navigator(data).navigateTo("user.hobbies").getLength();
+
+console.log(hobbiesCount); // Outputs: 2
 ```
 
 ## Advanced Usage
@@ -77,6 +82,10 @@ console.log(bobsFirstSkill); // Outputs: 'Python'
 const aliceIndex = navigator(users).getIndex("name", "Alice");
 
 console.log(aliceIndex); // Outputs: 0
+
+const usersCount = navigator(users).getLength();
+
+console.log(usersCount); // Outputs: 2
 ```
 
 ## API
@@ -127,6 +136,12 @@ Returns: The index of the found element, or -1 if not found.
 
 Throws an error if the current value is not an array.
 
+### getLength()
+
+Returns the length of the current array if it's an array, or undefined otherwise.
+
+Returns: The length of the array (number) if the current value is an array, or undefined if it's not an array.
+
 ### value()
 
 Returns the current value in the navigation.
@@ -134,7 +149,6 @@ Returns: The current value, or undefined if the navigation led to an invalid pat
 
 ### Examples
 
-Examples
 The examples folder contains several projects demonstrating how to use nested-navigator in different contexts:
 
 nested-navigator-js-test: A plain JavaScript example showcasing basic usage of nested-navigator.
@@ -180,6 +194,11 @@ console.log(bobIndex); // Outputs: 1
 const reactIndex = navigator(data).navigateTo("tags").getIndex("react");
 
 console.log(reactIndex); // Outputs: 2
+
+// Getting the length of an array
+const usersCount = navigator(data).navigateTo("users").getLength();
+
+console.log(usersCount); // Outputs: 2
 ```
 
 ```javascript
@@ -220,6 +239,13 @@ console.log(admins);
 //   { id: 1, name: "Alice", role: "admin" },
 //   { id: 3, name: "Charlie", role: "admin" }
 // ]
+
+const adminsCount = navigator(data)
+  .navigateTo("users")
+  .filter("role", "admin")
+  .getLength();
+
+console.log(adminsCount); // Outputs: 2
 ```
 
 ### TypeScript Support
@@ -254,6 +280,11 @@ const path: NestedKeyOf<User> = "address.city";
 const city = navigator(user).navigateTo(path).value();
 
 console.log(city); // Outputs: 'New York'
+
+// Getting the length of an array
+const usersCount = navigator(data).navigateTo("users").getLength();
+
+console.log(usersCount); // Outputs: 2
 ```
 
 ### Contributing

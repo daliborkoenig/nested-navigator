@@ -194,6 +194,18 @@ describe("NestedNavigator", () => {
     });
   });
 
+  describe("getLength method", () => {
+    it("should return the length of an array", () => {
+      const length = navigator(testData).navigateTo("user.hobbies").getLength();
+      expect(length).toBe(3);
+    });
+
+    it("should return undefined for non-array values", () => {
+      const length = navigator(testData).navigateTo("user.name").getLength();
+      expect(length).toBeUndefined();
+    });
+  });
+
   describe("value method", () => {
     it("should return the current value", () => {
       expect(navigator(testData).navigateTo("user.age").value()).toBe(30);
