@@ -27,7 +27,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/daliborkoenig/nested-navigator"
+    "url": "git+https://github.com/daliborkoenig/nested-navigator.git"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

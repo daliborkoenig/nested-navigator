@@ -14,11 +14,12 @@ A lightweight, type-safe utility for effortlessly navigating and querying deeply
 - [API](#api)
   - [navigator(obj)](#navigatorobj)
   - [navigateTo(path)](#navigatetopath)
-  - [find(key, value)](#findkey-value)
-  - [filter(key, value)](#filterkey-value)
-  - [getIndex(keyOrValue, value?)](#getindexkeyorvalue-value)
+  - [find(key, value, operation?)](#findkey-value-operation)
+  - [filter(key, value, operation?)](#filterkey-value-operation)
+  - [getIndex(keyOrValue, value?, operation?)](#getindexkeyorvalue-value-operation)
   - [getLength()](#getlength)
   - [value()](#value)
+- [Comparison Operations](#comparison-operations)
 - [Examples](#examples)
 - [TypeScript Support](#typescript-support)
 - [Contributing](#contributing)
@@ -40,7 +41,7 @@ yarn add nested-navigator
 
 ## Usage
 
-## Basic Usage
+### Basic Usage
 
 ```javascript
 import { navigator } from "nested-navigator";
@@ -64,13 +65,19 @@ const hobbiesCount = navigator(data).navigateTo("user.hobbies").getLength();
 console.log(hobbiesCount); // Outputs: 2
 ```
 
-## Advanced Usage
+### Advanced Usage
 
 ```javascript
 const users = [
-  { id: 1, name: "Alice", skills: ["JavaScript", "React"] },
-  { id: 2, name: "Bob", skills: ["Python", "Django"] },
+  { id: 1, name: "Alice", age: 30, skills: ["JavaScript", "React"] },
+  { id: 2, name: "Bob", age: 25, skills: ["Python", "Django"] },
 ];
+
+const olderThan25 = navigator(users)
+  .filter("age", 25, "greater_than")
+  .value();
+
+console.log(olderThan25); // Outputs: [{ id: 1, name: "Alice", age: 30, skills: ["JavaScript", "React"] }]
 
 const bobsFirstSkill = navigator(users)
   .find("name", "Bob")
@@ -82,10 +89,6 @@ console.log(bobsFirstSkill); // Outputs: 'Python'
 const aliceIndex = navigator(users).getIndex("name", "Alice");
 
 console.log(aliceIndex); // Outputs: 0
-
-const usersCount = navigator(users).getLength();
-
-console.log(usersCount); // Outputs: 2
 ```
 
 ## API
@@ -106,35 +109,35 @@ Navigates to a nested property specified by the given key path.
 
 Returns: A new NestedNavigator instance positioned at the specified nested location.
 
-### find(key, value)
+### find(key, value, operation?)
 
-Finds an element in the current array based on a key-value pair.
+Finds an element in the current array based on a key-value pair and an optional comparison operation.
 
 - `key`: The key to search on.
 - `value`: The value to search for.
+- `operation`: (Optional) The comparison operation to use. Defaults to "equals".
 
 Returns: A new NestedNavigator instance with the found array element.
-Throws an error if the current value is not an array.
 
-### filter(key, value)
+### filter(key, value, operation?)
 
-Filters elements in the current array based on a key-value pair.
+Filters elements in the current array based on a key-value pair and an optional comparison operation.
 
 - `key`: The key to filter on.
 - `value`: The value to filter for.
+- `operation`: (Optional) The comparison operation to use. Defaults to "equals".
 
 Returns: A new NestedNavigator instance with an array of matching elements.
 
-### getIndex(keyOrValue, value?)
+### getIndex(keyOrValue, value?, operation?)
 
 Finds the index of an element in the current array based on a key-value pair (for arrays of objects) or a direct value (for arrays of primitives).
 
 - `keyOrValue`: For arrays of objects, this is the key to search on. For arrays of primitives, this is the value to search for.
 - `value`: (Optional) For arrays of objects, this is the value to search for. This parameter is not used for arrays of primitives.
+- `operation`: (Optional) The comparison operation to use. Defaults to "equals".
 
 Returns: The index of the found element, or -1 if not found.
-
-Throws an error if the current value is not an array.
 
 ### getLength()
 
@@ -145,17 +148,23 @@ Returns: The length of the array (number) if the current value is an array, or u
 ### value()
 
 Returns the current value in the navigation.
+
 Returns: The current value, or undefined if the navigation led to an invalid path.
 
-### Examples
+## Comparison Operations
 
-The examples folder contains several projects demonstrating how to use nested-navigator in different contexts:
+The following comparison operations are available for `find`, `filter`, and `getIndex` methods:
 
-nested-navigator-js-test: A plain JavaScript example showcasing basic usage of nested-navigator.
-nested-navigator-ts-test: A TypeScript example demonstrating how to use nested-navigator with TypeScript for type safety and autocompletion.
-nested-navigator-reactjs-test: An example integrating nested-navigator with React (JavaScript).
-nested-navigator-reactts-test: An example integrating nested-navigator with React (TypeScript).
-These examples are provided to help you get started and understand how to apply nested-navigator in various scenarios.
+- `"equals"` (default): Checks if values are strictly equal.
+- `"not_equals"`: Checks if values are not strictly equal.
+- `"greater_than"`: Checks if the first value is greater than the second.
+- `"less_than"`: Checks if the first value is less than the second.
+- `"greater_than_or_equal"`: Checks if the first value is greater than or equal to the second.
+- `"less_than_or_equal"`: Checks if the first value is less than or equal to the second.
+
+Note: Numerical operations (`"greater_than"`, `"less_than"`, `"greater_than_or_equal"`, `"less_than_or_equal"`) are only performed if both values are numbers.
+
+## Examples
 
 ### Navigating through nested objects
 
@@ -174,129 +183,86 @@ const age = navigator(data).navigateTo("user.profile.age").value();
 console.log(age); // Outputs: 30
 ```
 
-### Working with arrays
+### Working with arrays and comparison operations
 
 ```javascript
 const data = {
   users: [
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
-  ],
-  tags: ["javascript", "typescript", "react"],
-};
-
-// Finding index in an array of objects
-const bobIndex = navigator(data).navigateTo("users").getIndex("name", "Bob");
-
-console.log(bobIndex); // Outputs: 1
-
-// Finding index in an array of primitives
-const reactIndex = navigator(data).navigateTo("tags").getIndex("react");
-
-console.log(reactIndex); // Outputs: 2
-
-// Getting the length of an array
-const usersCount = navigator(data).navigateTo("users").getLength();
-
-console.log(usersCount); // Outputs: 2
-```
-
-```javascript
-const data = {
-  users: [
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
+    { id: 1, name: "Alice", age: 28 },
+    { id: 2, name: "Bob", age: 32 },
+    { id: 3, name: "Charlie", age: 22 },
   ],
 };
 
-const bob = navigator(data).navigateTo("users").find("name", "Bob").value();
-
-console.log(bob); // Outputs: { id: 2, name: 'Bob' }
-
-const aliceIndex = navigator(data)
+// Finding users older than 25
+const olderThan25 = navigator(data)
   .navigateTo("users")
-  .getIndex("name", "Alice");
-
-console.log(aliceIndex); // Outputs: 0
-```
-
-```javascript
-const data = {
-  users: [
-    { id: 1, name: "Alice", role: "admin" },
-    { id: 2, name: "Bob", role: "user" },
-    { id: 3, name: "Charlie", role: "admin" },
-  ],
-};
-
-const admins = navigator(data)
-  .navigateTo("users")
-  .filter("role", "admin")
+  .filter("age", 25, "greater_than")
   .value();
 
-console.log(admins);
+console.log(olderThan25);
 // Outputs: [
-//   { id: 1, name: "Alice", role: "admin" },
-//   { id: 3, name: "Charlie", role: "admin" }
+//   { id: 1, name: "Alice", age: 28 },
+//   { id: 2, name: "Bob", age: 32 }
 // ]
 
-const adminsCount = navigator(data)
+// Finding the first user not named "Bob"
+const notBob = navigator(data)
   .navigateTo("users")
-  .filter("role", "admin")
-  .getLength();
+  .find("name", "Bob", "not_equals")
+  .value();
 
-console.log(adminsCount); // Outputs: 2
+console.log(notBob); // Outputs: { id: 1, name: "Alice", age: 28 }
+
+// Getting the index of the youngest user
+const youngestIndex = navigator(data)
+  .navigateTo("users")
+  .getIndex("age", undefined, "less_than_or_equal");
+
+console.log(youngestIndex); // Outputs: 2 (index of Charlie)
 ```
 
-### TypeScript Support
+## TypeScript Support
 
 nested-navigator is written in TypeScript and provides full type safety and autocompletion when used in TypeScript projects.
 
 ```typescript
 import { navigator, NestedKeyOf } from "nested-navigator";
 
-interface Data {
-  users: Array<{ id: number; name: string }>;
-  tags: string[];
+interface User {
+  name: string;
+  age: number;
+  address: {
+    city: string;
+    country: string;
+  };
 }
 
-const data: Data = {
-  users: [
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
-  ],
-  tags: ["javascript", "typescript", "react"],
+const user: User = {
+  name: "John Doe",
+  age: 30,
+  address: {
+    city: "New York",
+    country: "USA",
+  },
 };
-
-// Finding index in an array of objects
-const bobIndex = navigator(data).navigateTo("users").getIndex("name", "Bob");
-
-// Finding index in an array of primitives
-const reactIndex = navigator(data).navigateTo("tags").getIndex("react");
-
-console.log(bobIndex, reactIndex); // Outputs: 1 2
 
 const path: NestedKeyOf<User> = "address.city";
 const city = navigator(user).navigateTo(path).value();
 
 console.log(city); // Outputs: 'New York'
-
-// Getting the length of an array
-const usersCount = navigator(data).navigateTo("users").getLength();
-
-console.log(usersCount); // Outputs: 2
 ```
 
-### Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-Fork the repository
-Create your feature branch (git checkout -b feature/AmazingFeature)
-Commit your changes (git commit -m 'Add some AmazingFeature')
-Push to the branch (git push origin feature/AmazingFeature)
-Open a Pull Request
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-### License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.

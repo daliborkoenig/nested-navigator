@@ -1,4 +1,4 @@
-import { NestedKeyOf, NestedValueOf } from "./types";
+import { ComparisonOperation, NestedKeyOf, NestedValueOf } from "./types";
 
 /**
  * NestedNavigator provides a fluent interface for traversing and querying nested objects and arrays.
@@ -49,19 +49,49 @@ export class NestedNavigator<T, C = T> {
   }
 
   /**
-   * Finds an element in the current array based on a key-value pair.
+   * Compares two values based on the specified operation.
+   *
+   * @private
+   * @param a - The first value to compare.
+   * @param b - The second value to compare.
+   * @param operation - The comparison operation to perform.
+   * @returns A boolean indicating whether the comparison is true or false.
+   */
+  private compare(a: any, b: any, operation: ComparisonOperation): boolean {
+    switch (operation) {
+      case "equals":
+        return a === b;
+      case "not_equals":
+        return a !== b;
+      case "greater_than":
+        return typeof a === "number" && typeof b === "number" && a > b;
+      case "less_than":
+        return typeof a === "number" && typeof b === "number" && a < b;
+      case "greater_than_or_equal":
+        return typeof a === "number" && typeof b === "number" && a >= b;
+      case "less_than_or_equal":
+        return typeof a === "number" && typeof b === "number" && a <= b;
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Finds an element in the current array based on a key-value pair and an optional comparison operation.
    *
    * @template K - The type of the key to search on (must be a key of the array element type).
    * @param key - The key to search on.
-   * @param value - The value to search for. If undefined, the method will return undefined.
+   * @param value - The value to search for.
+   * @param operation - The comparison operation to use (defaults to "equals").
    * @returns A new NestedNavigator instance with the found array element, or undefined if:
    *          - The current value is not an array
-   *          - No element is found matching the key-value pair
-   *          - The provided value is undefined
+   *          - No element is found matching the key-value pair and operation
+   *          - The operation is numerical and the values are not numbers
    */
   find<K extends C extends any[] ? keyof C[number] : never>(
     key: K,
-    value: C extends any[] ? C[number][K] | undefined : never
+    value: C extends any[] ? C[number][K] : never,
+    operation: ComparisonOperation = "equals"
   ): NestedNavigator<T, C extends any[] ? C[number] | undefined : undefined> {
     if (!Array.isArray(this.current)) {
       return new NestedNavigator<
@@ -72,16 +102,10 @@ export class NestedNavigator<T, C = T> {
         undefined as C extends any[] ? C[number] | undefined : undefined
       );
     }
-    if (value === undefined) {
-      return new NestedNavigator<
-        T,
-        C extends any[] ? C[number] | undefined : undefined
-      >(
-        this.obj,
-        undefined as C extends any[] ? C[number] | undefined : undefined
-      );
-    }
-    const found = this.current.find((item) => item[key] === value);
+
+    const found = this.current.find((item) =>
+      this.compare(item[key], value, operation)
+    );
     return new NestedNavigator<
       T,
       C extends any[] ? C[number] | undefined : undefined
@@ -89,18 +113,20 @@ export class NestedNavigator<T, C = T> {
   }
 
   /**
-   * Filters elements in the current array based on a key-value pair.
+   * Filters elements in the current array based on a key-value pair and an optional comparison operation.
    *
    * @template K - The type of the key to filter on (must be a key of the array element type).
    * @param key - The key to filter on.
    * @param value - The value to filter for.
+   * @param operation - The comparison operation to use (defaults to "equals").
    * @returns A new NestedNavigator instance with:
    * - undefined if the current value is not an array
    * - an array of matching objects otherwise (which may be empty if no matches are found)
    */
   filter<K extends C extends any[] ? keyof C[number] : never>(
     key: K,
-    value: C extends any[] ? C[number][K] : never
+    value: C extends any[] ? C[number][K] : never,
+    operation: ComparisonOperation = "equals"
   ): NestedNavigator<T, C extends any[] ? C[number][] : undefined> {
     if (!Array.isArray(this.current)) {
       return new NestedNavigator<T, C extends any[] ? C[number][] : undefined>(
@@ -108,7 +134,10 @@ export class NestedNavigator<T, C = T> {
         undefined as C extends any[] ? C[number][] : undefined
       );
     }
-    const found = this.current.filter((item) => item[key] === value);
+
+    const found = this.current.filter((item) =>
+      this.compare(item[key], value, operation)
+    );
     return new NestedNavigator<T, C extends any[] ? C[number][] : undefined>(
       this.obj,
       found as C extends any[] ? C[number][] : undefined
@@ -116,12 +145,14 @@ export class NestedNavigator<T, C = T> {
   }
 
   /**
-   * Finds the index of an element in the current array based on a key-value pair or just a value.
+   * Finds the index of an element in the current array based on a key-value pair or just a value,
+   * with an optional comparison operation.
    *
    * @template K - The type of the key to search on (for object arrays) or the type of value to search for (for primitive arrays).
    * @template V - The type of the value to search for (only for object arrays).
    * @param keyOrValue - The key to search on (for object arrays) or the value to search for (for primitive arrays).
    * @param value - The value to search for (only used for object arrays).
+   * @param operation - The comparison operation to use (defaults to "equals").
    * @returns The index of the found element, -1 if not found, or undefined if the current value is not an array.
    */
   getIndex<
@@ -135,18 +166,22 @@ export class NestedNavigator<T, C = T> {
         ? C[number][K & keyof C[number]] | undefined
         : never
       : never
-  >(keyOrValue: K, value?: V): number | undefined {
+  >(
+    keyOrValue: K,
+    value?: V,
+    operation: ComparisonOperation = "equals"
+  ): number | undefined {
     if (!Array.isArray(this.current)) {
       return undefined;
     }
 
     if (typeof keyOrValue !== "object" && value === undefined) {
-      // Searching by value in an array of primitives
-      return this.current.findIndex((item) => item === keyOrValue);
+      return this.current.findIndex((item) =>
+        this.compare(item, keyOrValue, operation)
+      );
     } else {
-      // Searching by key-value pair in an array of objects
-      return this.current.findIndex(
-        (item) => (item as any)[keyOrValue as string] === value
+      return this.current.findIndex((item) =>
+        this.compare((item as any)[keyOrValue as string], value, operation)
       );
     }
   }

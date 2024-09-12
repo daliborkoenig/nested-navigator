@@ -78,3 +78,14 @@ export type NestedValueOf<
       : never
     : never
   : never;
+
+/**
+ * Defines the types of comparison operations that can be performed.
+ */
+export type ComparisonOperation =
+  | "equals"
+  | "not_equals"
+  | "greater_than"
+  | "less_than"
+  | "greater_than_or_equal"
+  | "less_than_or_equal";
