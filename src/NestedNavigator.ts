@@ -90,7 +90,7 @@ export class NestedNavigator<T, C = T> {
    */
   find<K extends C extends any[] ? keyof C[number] : never>(
     key: K,
-    value: C extends any[] ? C[number][K] : never,
+    value: C extends any[] ? C[number][K] | undefined : never,
     operation: ComparisonOperation = "equals"
   ): NestedNavigator<T, C extends any[] ? C[number] | undefined : undefined> {
     if (!Array.isArray(this.current)) {
